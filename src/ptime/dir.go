@@ -1,8 +1,9 @@
-package file
+package ptime
 
 import (
 	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -36,11 +37,12 @@ func List(path string) []string {
 //IsAllowExt
 func IsAllowExt(fileName string) bool {
 	sl := strings.Split(fileName, ".")
-	ext := sl[len(sl)-1]
+	ext := strings.ToLower(sl[len(sl)-1])
 	extMap := map[string]bool{
 		"jpg": true,
 		"png": true,
 		"mp4": true,
+		"gif": true,
 	}
 	_, ok := extMap[ext]
 	if ok {
@@ -48,4 +50,12 @@ func IsAllowExt(fileName string) bool {
 	} else {
 		return false
 	}
+}
+
+func IsDir(f string) bool {
+	fi, e := os.Stat(f)
+	if e != nil {
+		return false
+	}
+	return fi.IsDir()
 }

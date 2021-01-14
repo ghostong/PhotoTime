@@ -1,4 +1,4 @@
-package file
+package ptime
 
 import (
 	"fmt"
@@ -20,19 +20,19 @@ func GetFileTime(file string) int64 {
 
 //匹配时间戳
 func matchTime(s [][]string) int64 {
-	isTs, ts := isTimeStamp(s)
+	ts, isTs := isTimeStamp(s)
 	if isTs {
 		return ts
 	}
-	isDt6, ts := isDateTime6(s)
+	ts, isDt6 := isDateTime6(s)
 	if isDt6 {
 		return ts
 	}
-	isDt2, ts := isDateTime2(s)
+	ts, isDt2 := isDateTime2(s)
 	if isDt2 {
 		return ts
 	}
-	isDtAny, ts := isDateTimeAny(s)
+	ts, isDtAny := isDateTimeAny(s)
 	if isDtAny {
 		return ts
 	}
@@ -40,68 +40,74 @@ func matchTime(s [][]string) int64 {
 	return 0
 }
 
-func isDateTimeAny(s [][]string) (bool, int64) {
+//lv_6847479811028421902_20200928172242.mp4
+func isDateTimeAny(s [][]string) (int64, bool) {
 	for _, j := range s {
 		dt := j[0]
 		if len(dt) == 14 {
-			ts, err := time.Parse("20060102150405", dt)
+			loc, _ := time.LoadLocation("Local")
+			ts, err := time.ParseInLocation("20060102150405", dt, loc)
 			if err == nil {
 				if isAllowTs(ts.Unix()) {
-					return true, ts.Unix()
+					return ts.Unix(), true
 				}
 			}
 		}
 	}
-	return false, 0
+	return 0, false
 }
 
-func isDateTime2(s [][]string) (bool, int64) {
+//IMG_20210107_204835R.jpg
+func isDateTime2(s [][]string) (int64, bool) {
 	if len(s) == 2 {
 		dt := ""
 		for _, j := range s {
 			dt += j[0]
 		}
 		if len(dt) == 14 {
-			ts, err := time.Parse("20060102150405", dt)
+			loc, _ := time.LoadLocation("Local")
+			ts, err := time.ParseInLocation("20060102150405", dt, loc)
 			if err == nil {
 				if isAllowTs(ts.Unix()) {
-					return true, ts.Unix()
+					return ts.Unix(), true
 				}
 			}
 		}
 	}
-	return false, 0
+	return 0, false
 }
 
-func isDateTime6(s [][]string) (bool, int64) {
+//pt2021_01_02_19_23_38.jpg
+func isDateTime6(s [][]string) (int64, bool) {
 	if len(s) == 6 {
 		dt := ""
 		for _, j := range s {
 			dt += j[0]
 		}
 		if len(dt) == 14 {
-			ts, err := time.Parse("20060102150405", dt)
+			loc, _ := time.LoadLocation("Local")
+			ts, err := time.ParseInLocation("20060102150405", dt, loc)
 			if err == nil {
 				if isAllowTs(ts.Unix()) {
-					return true, ts.Unix()
+					return ts.Unix(), true
 				}
 			}
 		}
 	}
-	return false, 0
+	return 0, false
 }
 
 //时间是否时间戳
-func isTimeStamp(s [][]string) (bool, int64) {
+func isTimeStamp(s [][]string) (int64, bool) {
 	for _, j := range s {
 		if len(j[0]) > 10 {
 			ts, _ := strconv.ParseInt(j[0][0:10], 10, 64)
 			if isAllowTs(ts) {
-				return true, ts
+				return ts, true
 			}
 		}
 	}
-	return false, 0
+	return 0, false
 }
 
 //是否有效时间戳
@@ -112,5 +118,16 @@ func isAllowTs(ts int64) bool {
 		return true
 	} else {
 		return false
+	}
+}
+
+//时间转本地时间戳
+func dtToLocalTs(dt string) (time.Time, bool) {
+	loc, _ := time.LoadLocation("Local")
+	ts, err := time.ParseInLocation("20060102150405", dt, loc)
+	if err == nil {
+		return ts, true
+	} else {
+		return time.Time{}, false
 	}
 }
