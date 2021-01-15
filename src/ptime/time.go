@@ -1,7 +1,6 @@
 package ptime
 
 import (
-	"fmt"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -36,7 +35,6 @@ func matchTime(s [][]string) int64 {
 	if isDtAny {
 		return ts
 	}
-	fmt.Println(s)
 	return 0
 }
 
@@ -79,7 +77,8 @@ func isDateTime2(s [][]string) (int64, bool) {
 
 //pt2021_01_02_19_23_38.jpg
 func isDateTime6(s [][]string) (int64, bool) {
-	if len(s) == 6 {
+	if len(s) >= 6 {
+		s := s[0:6]
 		dt := ""
 		for _, j := range s {
 			dt += j[0]
@@ -97,7 +96,8 @@ func isDateTime6(s [][]string) (int64, bool) {
 	return 0, false
 }
 
-//时间是否时间戳
+//159006351462438.PNG
+//img_159006351462438_2894792112832.gif
 func isTimeStamp(s [][]string) (int64, bool) {
 	for _, j := range s {
 		if len(j[0]) > 10 {

@@ -22,8 +22,10 @@ func main() {
 	for _, j := range s {
 		ft := ptime.GetFileTime(j)
 		if ft > 0 {
-			fmt.Println(time.Unix(ft, 0).Format("2006-01-02 15:04:05"), "->", j)
 			ptime.ChangeFileTime(j, ft)
+			fmt.Println(time.Unix(ft, 0).Format("2006-01-02 15:04:05"), "->", j)
+		} else {
+			fmt.Println("未匹配成功: ", "->", j)
 		}
 	}
 }
