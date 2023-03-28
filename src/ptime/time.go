@@ -31,6 +31,10 @@ func matchTime(s [][]string) int64 {
 	if isDt2 {
 		return ts
 	}
+	ts, isDt3 := isDateTime3(s)
+	if isDt3 {
+		return ts
+	}
 	ts, isDtAny := isDateTimeAny(s)
 	if isDtAny {
 		return ts
@@ -58,6 +62,27 @@ func isDateTimeAny(s [][]string) (int64, bool) {
 //IMG_20210107_204835R.jpg
 func isDateTime2(s [][]string) (int64, bool) {
 	if len(s) == 2 {
+		dt := ""
+		for _, j := range s {
+			dt += j[0]
+		}
+		if len(dt) == 14 {
+			loc, _ := time.LoadLocation("Local")
+			ts, err := time.ParseInLocation("20060102150405", dt, loc)
+			if err == nil {
+				if isAllowTs(ts.Unix()) {
+					return ts.Unix(), true
+				}
+			}
+		}
+	}
+	return 0, false
+}
+
+//img_20210508_190915r(2).jpg
+func isDateTime3(s [][]string) (int64, bool) {
+	if len(s) == 3 {
+		s = s[0:2]
 		dt := ""
 		for _, j := range s {
 			dt += j[0]

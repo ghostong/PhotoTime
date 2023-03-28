@@ -1,11 +1,11 @@
 package main
 
 import (
+	"./src/ptime"
+	"./src/uitls"
 	"fmt"
 	"os"
-	"ptime"
 	"time"
-	"uitls"
 )
 
 func main() {
